@@ -1,118 +1,265 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useState } from "react";
+import { StyleSheet, View, Text, Image, Dimensions } from "react-native";
+import Swiper from "react-native-deck-swiper";
+import Icon from "react-native-vector-icons/FontAwesome";
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+const { width } = Dimensions.get("window");
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const SwipeCardUI = () => {
+  const [cards] = useState([
+    {
+      id: 1,
+      name: "Prajwal",
+      age: 20,
+      image: "https://randomuser.me/api/portraits/men/1.jpg",
+    },
+    {
+      id: 2,
+      name: "Suyog",
+      age: 21,
+      image: "https://randomuser.me/api/portraits/men/2.jpg",
+    },
+    {
+      id: 3,
+      name: "Neha",
+      age: 22,
+      image: "https://randomuser.me/api/portraits/women/1.jpg",
+    },
+    {
+      id: 4,
+      name: "Amit",
+      age: 23,
+      image: "https://randomuser.me/api/portraits/men/3.jpg",
+    },
+    {
+      id: 5,
+      name: "Rohit",
+      age: 19,
+      image: "https://randomuser.me/api/portraits/men/4.jpg",
+    },
+    {
+      id: 6,
+      name: "Sneha",
+      age: 20,
+      image: "https://randomuser.me/api/portraits/women/2.jpg",
+    },
+    {
+      id: 7,
+      name: "Kajal",
+      age: 24,
+      image: "https://randomuser.me/api/portraits/women/3.jpg",
+    },
+    {
+      id: 8,
+      name: "Rajesh",
+      age: 21,
+      image: "https://randomuser.me/api/portraits/men/5.jpg",
+    },
+    {
+      id: 9,
+      name: "Pooja",
+      age: 22,
+      image: "https://randomuser.me/api/portraits/women/4.jpg",
+    },
+    {
+      id: 10,
+      name: "Ankita",
+      age: 23,
+      image: "https://randomuser.me/api/portraits/women/5.jpg",
+    },
+  ]);
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+  const [swipedLeftCount, setSwipedLeftCount] = useState(0);
+  const [swipedRightCount, setSwipedRightCount] = useState(0);
+  const [finished, setFinished] = useState(false);
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+  const totalCards = cards.length;
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const [outOfLikes, setOutOfLikes] = useState(false);
+  const [outOfProfiles, setOutOfProfiles] = useState(false);
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const onSwipedLeft = () => {
+    setSwipedLeftCount((prev) => prev + 1);
+    if (swipedLeftCount + 1 === totalCards) {
+      setFinished(true);
+      setOutOfProfiles(true);
+    }
+  };
+
+  const onSwipedRight = () => {
+    setSwipedRightCount((prev) => prev + 1);
+    if (swipedRightCount + 1 === totalCards) {
+      setFinished(true);
+      setOutOfLikes(true);
+    }
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+    <View style={styles.container}>
+      <>
+        <View style={styles.topBar}>
+          <Icon name="bars" size={24} color="#000" />
+          {outOfLikes ? (
+            <Text style={styles.outOfLikesText}>Out of likes</Text>
+          ) : outOfProfiles ? (
+            <Text style={styles.outOfLikesText}>Out of profiles</Text>
+          ) : (
+            <Text style={styles.outOfLikesText}>Bumble</Text>
+          )}
+          <Icon name="user-circle" size={24} color="#000" />
         </View>
-      </ScrollView>
-    </SafeAreaView>
+        {finished ? (
+          <View style={styles.finishedMessage}>
+            <Text style={styles.finishedText}>Done for today!</Text>
+          </View>
+        ) : (
+          <Swiper
+            cards={cards}
+            renderCard={(card) => (
+              <View style={styles.card}>
+                <Image
+                  source={{ uri: card.image }}
+                  style={styles.cardImage}
+                  resizeMethod="scale"
+                />
+                <View style={styles.bffBadge}>
+                  <Text style={styles.bffText}>bff</Text>
+                </View>
+
+                <View style={styles.badgeContainer}>
+                  <View style={styles.newHereBadge}>
+                    <Text style={styles.newHereText}>New here</Text>
+                  </View>
+                  <Text style={styles.userInfo}>
+                    {card.name}, {card.age}
+                  </Text>
+                </View>
+                <View style={styles.likeButton}>
+                  <Icon name="star" size={32} color="#303430" />
+                </View>
+              </View>
+            )}
+            onSwipedLeft={onSwipedLeft}
+            onSwipedRight={onSwipedRight}
+            backgroundColor="transparent"
+            stackSize={3}
+          />
+        )}
+      </>
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    justifyContent: "flex-start",
   },
-  sectionTitle: {
+  finishedMessage: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  finishedText: {
     fontSize: 24,
-    fontWeight: '600',
+    fontWeight: "bold",
+    color: "#000",
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  topBar: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: "#FFFFFF",
+    position: "absolute",
+    width: "100%",
+    zIndex: 1,
   },
-  highlight: {
-    fontWeight: '700',
+  outOfLikesText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#000",
+    backgroundColor: "#FFC107",
+    padding: 8,
+    borderRadius: 30,
+  },
+  card: {
+    width: width - 20,
+    height: "100%",
+    borderRadius: 15,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    position: "relative",
+    overflow: "hidden",
+    alignSelf: "center",
+    backgroundColor: "#FFFFFF",
+  },
+  cardImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: "100%",
+    height: "100%",
+    borderRadius: 15,
+    resizeMode: "cover",
+  },
+  bffBadge: {
+    position: "absolute",
+    top: 15,
+    left: 15,
+    borderRadius: 40,
+    padding: 10,
+    zIndex: 1,
+  },
+  bffText: {
+    fontSize: 14,
+    color: "#000",
+    fontWeight: "500",
+    backgroundColor: "#FFC107",
+    padding: 5,
+    paddingHorizontal: 10,
+    borderRadius: 15,
+    borderColor: "#34313A",
+    borderWidth: 1,
+  },
+  userInfo: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginTop: 10,
+    color: "#fff",
+    zIndex: 1,
+  },
+  newHereBadge: {
+    backgroundColor: "#FFC107",
+    borderRadius: 20,
+    padding: 8,
+    zIndex: 1,
+  },
+  newHereText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#000",
+  },
+  likeButton: {
+    position: "absolute",
+    bottom: 20,
+    right: 15,
+    backgroundColor: "#FEC301",
+    borderRadius: 50,
+    padding: 10,
+    elevation: 5,
+    zIndex: 1,
+  },
+  badgeContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 15,
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    height: 100,
+    zIndex: 1,
   },
 });
 
-export default App;
+export default SwipeCardUI;
